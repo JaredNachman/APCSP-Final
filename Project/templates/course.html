@@ -1,0 +1,53 @@
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div class="row justify-content-center">
+    <h1>{{course.name}}</h1>
+  </div>
+
+  <div class="row justify-content-center">
+    <a href='{{url_for('newRecipe', course_id = course.id) }}'>Add Recipe</a>
+  </div><br>
+
+  <div class="row justify-content-md-center">
+    <div class="col-lg-8">
+      {% for i in items %}
+      <div class="card text-center">
+        <div class="card-header">
+          <h3>{{i.name}}</h3>
+
+        </div>
+        <div class="card-body">
+          <div class="row whole-card">
+            <div class="col-lg-1">
+            </div>
+            <div class="col-lg-4 text-left"><br>
+              <p class="card-info"><b>Total Time:</b> {{i.total_time}}</p>
+              <p class="card-info"><b>Prep Time:</b> {{i.prep_time}}</p>
+              <p class="card-info"><b>Cook Time:</b> {{i.cook_time}}</p>
+              <p class="card-info"><b>Yield:</b> {{i.output}}</p>
+              <p class="card-info"><b>Difficulty:</b> {{i.difficulty}}</p>
+              <p class="card-info"><b>Directions:</b> {{i.directions}}</p>
+              <p class="card-info"><b>Ingredients:</b> {{i.ingredients}}</p>
+            </div>
+
+          </div>
+          <div class="card-footer text-muted">
+            <a href='{{url_for('editRecipe', course_id = course.id, recipe_id = i.id) }}'>Edit</a>
+            |
+            <a href='{{url_for('deleteRecipe', course_id = course.id, recipe_id = i.id ) }}'>Delete</a>
+          </div>
+        </div>
+      </div>
+      <br>
+      {% endfor %}
+    </div>
+</body>
+</html>

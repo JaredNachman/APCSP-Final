@@ -1,3 +1,4 @@
+# Imports
 import os
 import sys
 
@@ -33,7 +34,7 @@ class Recipe(Base):
 
 
 
-
+# Create Database
 
 engine = create_engine('sqlite:///recipecollection.db')
 

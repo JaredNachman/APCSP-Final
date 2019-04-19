@@ -1,3 +1,4 @@
+#Imports
 import os
 import sys
 
@@ -5,6 +6,7 @@ from database_setup import Base, Course, Recipe
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+# Connect to Database Session
 engine = create_engine('sqlite:///recipecollection.db')
 
 Base.metadata.bind = engine
@@ -19,6 +21,7 @@ DBSession = sessionmaker(bind=engine)
 # session.rollback()
 session = DBSession()
 
+# Database Templates
 course1 = Course(name="Appetizer")
 
 session.add(course1)

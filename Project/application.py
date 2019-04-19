@@ -1,3 +1,4 @@
+# Imports
 import json
 import random
 import string
@@ -13,26 +14,37 @@ from database_setup import Base, Course, Recipe
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+# Database Binding
 app = Flask(__name__)
 
+
 engine = create_engine('sqlite:///recipecollection.db')
+
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
-
 session = DBSession()
 
-
 # App Home
+@app.route('/')
+def appHome():
+    session = DBSession()
+    courses = session.query(Course).all()
+    if 'username' not in login_session:
+        return render_template('publichome.html', courses=courses)
+    else:
+        return render_template('home.html', courses=courses)
+
+# Course Home
 @app.route('/course/<int:course_id>/')
 def courseMenu(course_id):
     session = DBSession()
-    sport = session.query(Course).filter_by(id=course_id).one()
+    course = session.query(Course).filter_by(id=course_id).one()
     items = session.query(Recipe).filter_by(course_id=course.id)
     return render_template('course.html', course=course, items=items)
 
 
-# Create
+# Create Recipe
 @app.route('/courses/<int:course_id>/new', methods=['GET', 'POST'])
 def newRecipe(course_id):
     session = DBSession()
@@ -42,17 +54,17 @@ def newRecipe(course_id):
         session.add(newItem)
         session.commit()
         print "New Team Created"
-        return redirect(url_for('courseMenu', course_id=couse_id))
+        return redirect(url_for('courseMenu', course_id=course_id))
     else:
         return render_template('newrecipe.html', course_id=course_id)
 
 
-# Edit
+# Edit Recipe
 session = DBSession()
 @app.route('/courses/<int:course_id>/<int:recipe_id>/edit', methods=['GET', 'POST'])
 def editRecipe(course_id, recipe_id):
     session = DBSession()
-    editedItem = session.query(recipe).filter_by(id=recipe_id).one()
+    editedItem = session.query(Recipe).filter_by(id=recipe_id).one()
 
     if request.form:
         if request.form.get('name'):
@@ -78,8 +90,8 @@ def editRecipe(course_id, recipe_id):
         return render_template('editrecipe.html', course_id=course_id, recipe_id=recipe_id, item=editedItem)
 
 
-# Delete
-@app.route('/courses/<int:recipe_id>/<int:_id>/delete', methods=['GET', 'POST'])
+# Delete Recipe
+@app.route('/courses/<int:course_id>/<int:recipe_id>/delete', methods=['GET', 'POST'])
 def deleteRecipe(course_id, recipe_id):
     session = DBSession()
     itemToDelete = session.query(Recipe).filter_by(id=recipe_id).one()
