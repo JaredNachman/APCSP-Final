@@ -1,0 +1,28 @@
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+
+{% if 'username' not in session %}
+    <li>
+      <a class="nav-link" href="/login">Login</a>
+    </li>
+
+    <!--logout/profile-->
+    {% else %}
+
+    <li>
+
+      <a class="nav-link" href="/gdisconnect">Logout</a>
+    </li>
+    {% endif %}
+
+  </body>
+  </html>
