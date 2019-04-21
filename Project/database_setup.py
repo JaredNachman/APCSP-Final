@@ -8,12 +8,24 @@ from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
+# User Class
+class User(Base):
+    __tablename__ = 'user'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(250), nullable=False)
+    email = Column(String(250), nullable=False)
+    picture = Column(String(250))
+
+
 # Course Class
 class Course(Base):
     __tablename__ = 'course'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
 
 # Recipe Class
@@ -31,7 +43,8 @@ class Recipe(Base):
     output = Column(String(250), nullable=False)
     course_id = Column(Integer, ForeignKey('course.id'))
     course = relationship(Course)
-
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
 
 # Create Database
