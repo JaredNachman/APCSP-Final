@@ -1,0 +1,71 @@
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+<div class="row justify-content-center">
+  <h1>Courses</h1>
+</div><br>
+
+
+<div class="row">
+  <div class="col-lg-2">
+  </div>
+  <!--Appetizer-->
+  <div class="col-lg-3">
+    <div class="card text-center" style="max-width: 202px;">
+      <div class="card-body">
+        <h4 class="card-title">Appetizer</h4>
+      </div>
+      <img src="../static/images/baseball.jpg" class="center" style="width:130px;height:150px;display:block;margin-left: auto;margin-right:auto;" alt="Appetizer">
+      <div class="card-body">
+        <a href="{{url_for('courseMenu', course_id=1)}}" class="btn btn-primary">View Recipes</a>
+      </div>
+      <div class="row justify-content-center">
+        <a href='{{url_for('newRecipe', course_id = 1) }}'>Add Recipe</a>
+      </div><br>
+    </div>
+  </div>
+
+  <!--Main Course-->
+  <div class="col-lg-3">
+    <div class="card text-center" style="max-width: 202px;">
+      <div class="card-body">
+        <h4 class="card-title">Main Course</h4>
+      </div>
+      <img src="../static/images/soccer.jpg" class="center" style="width:130px;height:150px;display:block;margin-left:auto;margin-right: auto;" alt="Main Course">
+      <div class="card-body">
+        <a href="{{url_for('courseMenu', course_id=2)}}" class="btn btn-primary">View Recipes</a>
+      </div>
+      <div class="row justify-content-center">
+        <a href='{{url_for('newRecipe', course_id = 2) }}'>Add Recipe</a>
+      </div><br>
+    </div>
+  </div>
+
+  <!--Dessert-->
+  <div class="col-lg-2">
+    <div class="card text-center" style="max-width: 202px;">
+      <div class="card-body">
+        <h4 class="card-title">Dessert</h4>
+      </div>
+      <img src="../static/images/basketball.jpg" class="center" style="width:130px;height:150px;display:block;margin-left:auto;margin-right: auto;" alt="Dessert">
+      <div class="card-body">
+        <a href="{{url_for('courseMenu',  course_id=3)}}" class="btn btn-primary">View Recipes</a>
+      </div>
+      <div class="row justify-content-center">
+        <a href='{{url_for('newRecipe', course_id = 3) }}'>Add Recipe</a>
+      </div><br>
+    </div>
+  </div>
+
+
+</div>
+</div>
+</body>
+</html>

@@ -20,6 +20,7 @@ app = Flask(__name__)
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
+APPLICATION_NAME = "Recipe Application"
 
 
 engine = create_engine('sqlite:///recipecollection.db')
@@ -166,6 +167,7 @@ def gdisconnect():
             json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
+        print "stopped here"
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
