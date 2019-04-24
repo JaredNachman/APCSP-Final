@@ -167,7 +167,6 @@ def gdisconnect():
             json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
-        print "stopped here"
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
@@ -215,7 +214,7 @@ def newRecipe(course_id):
     session = DBSession()
     if request.form:
         newItem = Recipe(name=request.form.get('name'), total_time=request.form.get('total_time'), prep_time=request.form.get(
-            'prep_time'), cook_time=request.form.get('cook_time'), difficulty=request.form.get('difficulty'), directions=request.form.get('directions'), ingredients=request.form.get('ingredients'), output=request.form.get('output'), course_id=course_id)
+            'prep_time'), cook_time=request.form.get('cook_time'), difficulty=request.form.get('difficulty'), directions=request.form.get('directions'), ingredients=request.form.get('ingredients'), output=request.form.get('output'), image=request.form.get('image'), course_id=course_id)
         session.add(newItem)
         session.commit()
         print "New Team Created"

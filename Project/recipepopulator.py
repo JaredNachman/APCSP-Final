@@ -1,4 +1,4 @@
-#Imports
+# Imports
 import os
 import sys
 
@@ -48,7 +48,7 @@ session.add(course2)
 session.commit()
 
 
-recipie1=Recipe(user_id=1, name="Salmon", total_time="45 Minutes", prep_time="15 Minutes", cook_time="30 Minutes",
+recipe1=Recipe(user_id=1, name="Salmon", total_time="45 Minutes", prep_time="15 Minutes", cook_time="30 Minutes",
                 difficulty="5", directions="First wash the salmon and pat dry Then add garlic salt and pepper on all sides Bake for 30 Minutes",
                 ingredients="Salmon, Salt, Pepper, Garlic, Lemon", output="2 Servings", course=course2)
 
@@ -60,7 +60,7 @@ course3 = Course(name="Dessert")
 session.add(course3)
 session.commit()
 
-recipie1=Recipe(user_id=1, name="Chocolate Chip Cookies", total_time="35 Minutes", prep_time="20 Minutes", cook_time="25 Minutes",
+recipe1=Recipe(user_id=1, name="Chocolate Chip Cookies", total_time="35 Minutes", prep_time="20 Minutes", cook_time="25 Minutes",
                 difficulty="3", directions="Mix all dry ingreients in one bowl In another add all wet Then combine dry in wet and stir in chocolate chips and place balls on sheet and bake",
                 ingredients="Butter, Sugar, Flour, Baking, Soda, Chocolate Chips, Eggs", output="40 cookies", course=course3)
 

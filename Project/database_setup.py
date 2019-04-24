@@ -21,7 +21,6 @@ class User(Base):
 # Course Class
 class Course(Base):
     __tablename__ = 'course'
-
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False)
     user_id = Column(Integer, ForeignKey('user.id'))
@@ -41,6 +40,7 @@ class Recipe(Base):
     directions = Column(String(500), nullable=False)
     ingredients = Column(String(500), nullable=False)
     output = Column(String(250), nullable=False)
+    image = Column(String(500), nullable=True)
     course_id = Column(Integer, ForeignKey('course.id'))
     course = relationship(Course)
     user_id = Column(Integer, ForeignKey('user.id'))
