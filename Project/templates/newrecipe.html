@@ -8,29 +8,87 @@
 </head>
 
 <body>
-  <h2 style="margin-left:20px;"> New Recipe </h2>
-    <form action="{{url_for('newRecipe', course_id=course_id )}}" method='POST'>
+  {% include "navigation.html" %}
+<div class="row">
+    <div class="col-lg-1">
+    </div>
+<a href='{{url_for('courseMenu', course_id=course_id)}}' class="btn btn-info glyphicon glyphicon-arrow-left col-md-1"><h5>Back</h5></a>
+</div>
+  <main class="my-form">
+    <div class="cotainer">
+      <div class="row justify-content-center">
+        <div class="col-md-10">
+          <div class="card">
+            <div class="card-header">
+                <div class="row justify-content-center">
+              <h3>New Recipe</h3>
+            </div>
+            </div>
+            <div class="card-body">
+              <form action="{{url_for('newRecipe', course_id=course_id )}}" method='POST'>
+                <h5><b>Name:</b></h5>
+                <input type='text' class="form-control col-md-6" size='30' name='name' required><br><br><br>
 
-      <dl class="modify-team" style="margin-left:20px;">
-        <dt>Name:</dt>
-        <dd><input type='text' size='30' name='name' required></dd>
-        <dt>Total Time:</dt>
-        <dd><input type='text' size='12' name='total_time' required></dd>
-        <dt>Prep Time:</dt>
-        <dd><input type='text' size='12' name='prep_time' required></dd>
-        <dt>Cook Time:</dt>
-        <dd><input type='text' size='12' name='cook_time' required></dd>
-        <dt>Difficulty:</dt>
-        <dd><input type='text' size='2' name='difficulty' required></dd>
-        <dt>Yield:</dt>
-        <dd><input type='text' size='16' name='output' required></dd>
-        <dt>Directions:</dt>
-        <dd><textarea name='directions' rows='5' cols='40' required></textarea></dd>
-        <dt>Ingredients:</dt>
-        <dd><textarea name='ingredients' rows='5' cols='40' required></textarea></dd>
-      </dl>
-      <input class="submit-button" type='submit' value='Create' style="margin-left:20px;">
-    </form>
-    <a style="margin-left:20px;" href='{{url_for('courseMenu', course_id=course_id)}}'>Cancel</a>
-  </body>
-  </html>
+                <div class="form-group row ">
+                  <label for="total_time" class=" col-form-label text-md-right"><h5><b>Total Time:</b></h5></label>
+                  <div class="col-md-3">
+                    <input type='text' class="form-control" size='12' name='total_time' required>
+                  </div>
+                  <label for="prep_time" class="col-form-label text-md-right"><h5><b>Prep Time:</b></h5></label>
+                  <div class="col-md-3">
+                    <input type='text' class="form-control" size='12' name='prep_time' required>
+                  </div>
+                  <label for="cook_time" class="col-form-label text-md-right"><h5><b>Cook Time:</b></h5></label>
+                  <div class="col-md-3">
+                    <input type='text' class="form-control" size='12' name='cook_time' required>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="yield" class="col-md-2 col-form-label text-md-right"><h5><b>Yield:</b></h5></label>
+                  <div class="col-md-3">
+                    <input type='text' class="form-control" size='16' name='output' required>
+                  </div>
+                  <label for="difficulty" class="col-md-3 col-form-label text-md-right"><h5><b>Difficulty:</b></h5></label>
+                  <div class="col-md-3">
+                    <input type='text' class="form-control" size='2' name='difficulty' required>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-lg-6">
+                    <h5><b>Directions:</b></h5>
+                    <textarea name='directions' class="form-control " rows='5' cols='40' required></textarea>
+                  </div>
+                  <div class="col-lg-6">
+                    <h5><b>Ingredients:</b></h5>
+                    <textarea name='ingredients' class="form-control" rows='5' cols='40' required></textarea>
+                  </div>
+                </div>
+                <br>
+                <div class="row justify-content-center">
+<input class="btn btn-info" type='submit' value='Create' style="margin-left:20px;">
+</div><hr>
+<div class="row justify-content-center">
+<a style="margin-left:20px;" href='{{url_for('courseMenu', course_id=course_id)}}'>Cancel</a>
+
+                </div>
+            </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+
+  </main>
+
+
+
+
+
+
+
+
+</body>
+
+</html>
