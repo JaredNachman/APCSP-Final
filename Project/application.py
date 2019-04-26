@@ -159,7 +159,7 @@ def appHome():
     session = DBSession()
     courses = session.query(Course).all()
     if 'username' not in login_session:
-        return render_template('publichome.html', courses=courses)
+        return render_template('home.html', courses=courses)
     else:
         return render_template('home.html', courses=courses)
 
