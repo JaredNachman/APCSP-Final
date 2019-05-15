@@ -1,4 +1,5 @@
 # Imports
+import os
 import json
 import random
 import string
@@ -13,12 +14,23 @@ from database_setup import Base, Course, Recipe, User
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
 
+# File Upload
+from werkzeug.utils import secure_filename
+
 
 # Database Binding
 app = Flask(__name__)
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
 APPLICATION_NAME = "Recipe Application"
+
+UPLOAD_FOLDER = './static/images'
+ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif'])
+
+
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
 
 engine = create_engine('sqlite:///recipecollection.db')
 
@@ -177,7 +189,12 @@ def courseMenu(course_id):
 @app.route('/courses/<int:course_id>/new', methods=['GET', 'POST'])
 def newRecipe(course_id):
     session = DBSession()
-    if request.form:
+
+    if request.method =='POST':
+        file = request.files['image']
+        if file:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
         newItem = Recipe(name=request.form.get('name'), total_time=request.form.get('total_time'), prep_time=request.form.get('prep_time'), cook_time=request.form.get('cook_time'), difficulty=request.form.get('difficulty'), directions=request.form.get('directions'), ingredients=request.form.get('ingredients'), output=request.form.get('output'), image=request.form.get('image'), course_id=course_id)
         session.add(newItem)
         session.commit()
@@ -228,6 +245,9 @@ def deleteRecipe(course_id, recipe_id):
         return redirect(url_for('courseMenu', course_id=course_id))
     else:
         return render_template('deleterecipe.html', item=itemToDelete)
+
+# File Upload
+
 
 
 if __name__ == '__main__':

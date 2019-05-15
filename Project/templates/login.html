@@ -35,10 +35,9 @@
           },
           contentType: 'application/octet-stream; charset=utf-8',
           success:function(result){
-            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...')
-                 setTimeout(function() {
-                  window.location.href = "/";
-                }, 2000);
+            $('#result').html('Login Successful!</br>'+ result + '</br>Redirecting...');
+            window.location.href = "/";
+
           },
           processData:false,
           data:authResult['code']
