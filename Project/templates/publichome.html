@@ -1,1 +1,91 @@
-    <a href="{{url_for('courseMenu', course_id=2)}}" class="btn btn-primary">View Teams</a>
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+  {% include "navigation.html" %}
+
+  <div class="row justify-content-center">
+    <h1>Courses</h1>
+  </div>
+
+  <div class="row justify-content-center">
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+
+
+    {% for message in messages %}
+    <div class="col-lg-8">
+      <div class="alert alert-info alert-dismissible">
+        <strong>{{message}}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+
+    {% endif %}
+    {% endwith %}
+  </div>
+
+
+  <div class="row justify-content-center">
+    <!--Appetizer-->
+    <div class="col-lg-2">
+      <div class="card text-center" style="max-width: 202px;">
+        <div class="card-body">
+          <h4 class="card-title">Appetizer</h4>
+        </div>
+        <img src="../static/images/appetizer.jpg" class="center" style="width:130px;height:150px;display:block;margin-left: auto;margin-right:auto;" alt="Appetizer">
+        <div class="card-body"><br>
+          <a href="{{url_for('courseMenu', course_id=1)}}" class="btn btn-info">View Recipes</a>
+        </div>
+        <div class="row justify-content-center">
+        </div><br>
+      </div>
+    </div>
+
+    <!--Main Course-->
+    <div class="col-lg-2">
+      <div class="card text-center" style="max-width: 202px;">
+        <div class="card-body">
+          <h4 class="card-title">Main Course</h4>
+        </div>
+        <img src="../static/images/maincourse.jpg" class="center" style="width:130px;height:150px;display:block;margin-left:auto;margin-right: auto;" alt="Main Course">
+        <div class="card-body"><br>
+          <a href="{{url_for('courseMenu', course_id=2)}}" class="btn btn-info">View Recipes</a>
+        </div>
+        <div class="row justify-content-center">
+        </div><br>
+      </div>
+    </div>
+
+    <!--Dessert-->
+    <div class="col-lg-2">
+      <div class="card text-center" style="max-width: 202px;">
+        <div class="card-body">
+          <h4 class="card-title">Dessert</h4>
+        </div>
+        <img src="../static/images/dessert.jpg" class="center" style="width:130px;height:150px;display:block;margin-left:auto;margin-right: auto;" alt="Dessert">
+        <div class="card-body"><br>
+          <a href="{{url_for('courseMenu',  course_id=3)}}" class="btn btn-info">View Recipes</a>
+        </div>
+        <div class="row justify-content-center">
+        </div><br>
+      </div>
+    </div>
+
+
+  </div>
+</div><br><br>
+    {% include "footer.html" %}
+</body>
+</html>

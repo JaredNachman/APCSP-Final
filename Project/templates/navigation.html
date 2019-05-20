@@ -60,13 +60,13 @@ function start() {
           <!--login-->
     {% if 'username' not in session %}
 <li>
-    <a id="signinButton" class="fa fa-google navbar-right"> Login</a>
+    <a href="{{url_for('showLogin')}}" class="fa fa-google navbar-right"> Login</a>
 </li>
     <!--logout/profile-->
     {% else %}
 
     <li>
-      <a href="/gdisconnect" class="btn btn-info btn-sm nav-link">
+      <a href="/logout" class="btn btn-info btn-sm nav-link">
                 <span class="glyphicon glyphicon-log-out"></span> Log out
               </a>
     </li>

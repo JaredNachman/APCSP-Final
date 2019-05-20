@@ -26,7 +26,7 @@ CLIENT_ID = json.loads(
 APPLICATION_NAME = "Recipe Application"
 
 UPLOAD_FOLDER = './static/images'
-ALLOWED_EXTENSIONS = set(['pdf', 'png', 'jpg', 'jpeg', 'gif'])
+ALLOWED_EXTENSIONS = set(['jpg', 'pdf', 'jpeg', 'png'])
 
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -138,9 +138,10 @@ def gconnect():
     output += '<img src="'
     output += login_session['picture']
     output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    flash("you are now logged in as %s" % login_session['username'])
+    flash("You are now logged in as %s" % login_session['username'])
     print "done!"
     return output
+
 
 # Random Functions
 def createUser(login_session):
@@ -159,6 +160,8 @@ def getUserID(email):
         return user.id
     except:
         return None
+
+
 
 
 @app.route('/gdisconnect')
@@ -182,6 +185,18 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
 
+# Logout
+@app.route('/logout')
+def disconnect():
+    gdisconnect()
+    del login_session['gplus_id']
+    del login_session['access_token']
+    del login_session['username']
+    del login_session['email']
+    del login_session['picture']
+    flash("You have been successfully logged out.")
+    return redirect(url_for('appHome'))
+
 
 
 # App Home
@@ -190,7 +205,7 @@ def appHome():
     session = DBSession()
     courses = session.query(Course).all()
     if 'username' not in login_session:
-        return render_template('home.html', courses=courses)
+        return render_template('publichome.html', courses=courses)
     else:
         return render_template('home.html', courses=courses)
 
@@ -201,23 +216,26 @@ def courseMenu(course_id):
     session = DBSession()
     course = session.query(Course).filter_by(id=course_id).one()
     items = session.query(Recipe).filter_by(course_id=course.id)
-    return render_template('course.html', course=course, items=items)
+    if 'username' not in login_session:
+        return render_template('publiccourse.html', course=course, items=items)
+    else:
+        return render_template('course.html', course=course, items=items)
 
 
 # Create Recipe
 @app.route('/courses/<int:course_id>/new', methods=['GET', 'POST'])
 def newRecipe(course_id):
     session = DBSession()
-
     if request.method =='POST':
         file = request.files['image']
         if file:
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-        newItem = Recipe(name=request.form.get('name'), total_time=request.form.get('total_time'), prep_time=request.form.get('prep_time'), cook_time=request.form.get('cook_time'), difficulty=request.form.get('difficulty'), directions=request.form.get('directions'), ingredients=request.form.get('ingredients'), output=request.form.get('output'), image=request.form.get('image'), course_id=course_id)
+            print filename
+        newItem = Recipe(name=request.form.get('name'), total_time=request.form.get('total_time'), prep_time=request.form.get('prep_time'), cook_time=request.form.get('cook_time'), difficulty=request.form.get('difficulty'), directions=request.form.get('directions'), ingredients=request.form.get('ingredients'), output=request.form.get('output'), image=filename, user_id=login_session['user_id'], course_id=course_id)
         session.add(newItem)
+        flash('%s Successfully Created!' % newItem.name)
         session.commit()
-        print "New Team Created"
         return redirect(url_for('courseMenu', course_id=course_id))
     else:
         return render_template('newrecipe.html', course_id=course_id)
@@ -229,6 +247,8 @@ session = DBSession()
 def editRecipe(course_id, recipe_id):
     session = DBSession()
     editedItem = session.query(Recipe).filter_by(id=recipe_id).one()
+    if getUserID(login_session['email']) != editedItem.user_id:
+        return "<script>function myFunction() {alert('You are not authorized to edit this recipe.');}</script><body onload='myFunction()''>"
     if request.form:
         if request.form.get('name'):
             editedItem.name = request.form.get('name')
@@ -258,14 +278,16 @@ def editRecipe(course_id, recipe_id):
 def deleteRecipe(course_id, recipe_id):
     session = DBSession()
     itemToDelete = session.query(Recipe).filter_by(id=recipe_id).one()
+    if getUserID(login_session['email']) != itemToDelete.user_id:
+        return "<script>function myFunction() {alert('You are not authorized to delete this recipe.');}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(itemToDelete)
+        flash('%s Deleted' % itemToDelete.name)
         session.commit()
         return redirect(url_for('courseMenu', course_id=course_id))
     else:
         return render_template('deleterecipe.html', item=itemToDelete)
 
-# File Upload
 
 
 

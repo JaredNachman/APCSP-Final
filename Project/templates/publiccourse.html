@@ -35,12 +35,6 @@
     {% endwith %}
   </div>
 
-
-
-  <div class="row justify-content-center">
-    <a href='{{url_for('newRecipe', course_id = course.id) }}'>Add Recipe</a>
-  </div><br>
-
   <div class="row justify-content-md-center">
     <div class="col-lg-8">
       {% for i in items %}
@@ -87,12 +81,6 @@
             </div>
           </div>
           </div>
-          <div class="card-footer text-muted">
-            <a href='{{url_for('editRecipe', course_id = course.id, recipe_id = i.id) }}'>Edit</a>
-            |
-            <a href='{{url_for('deleteRecipe', course_id = course.id, recipe_id = i.id ) }}'>Delete</a>
-          </div>
-
         </div>
         <br>
         {% endfor %}
