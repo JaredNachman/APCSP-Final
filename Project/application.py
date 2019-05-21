@@ -28,7 +28,6 @@ APPLICATION_NAME = "Recipe Application"
 UPLOAD_FOLDER = './static/images'
 ALLOWED_EXTENSIONS = set(['jpg', 'pdf', 'jpeg', 'png'])
 
-
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
@@ -48,6 +47,24 @@ def showLogin():
     login_session['state'] = state
     # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state)
+
+# Random Functions
+def createUser(login_session):
+    newUser = User(name=login_session['username'], email=login_session[
+                   'email'], picture=login_session['picture'])
+    session.add(newUser)
+    session.commit()
+    user = session.query(User).filter_by(email=login_session['email']).one()
+    return user.id
+def getUserInfo(user_id):
+    user = session.query(User).filter_by(id=user_id).one()
+    return user
+def getUserID(email):
+    try:
+        user = session.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
 
 
 # Google Connect
@@ -143,23 +160,6 @@ def gconnect():
     return output
 
 
-# Random Functions
-def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'])
-    session.add(newUser)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
-    return user.id
-def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
-    return user
-def getUserID(email):
-    try:
-        user = session.query(User).filter_by(email=email).one()
-        return user.id
-    except:
-        return None
 
 
 
@@ -216,10 +216,12 @@ def courseMenu(course_id):
     session = DBSession()
     course = session.query(Course).filter_by(id=course_id).one()
     items = session.query(Recipe).filter_by(course_id=course.id)
+    user = session.query(User).filter_by(id=user_id).one()
     if 'username' not in login_session:
         return render_template('publiccourse.html', course=course, items=items)
     else:
-        return render_template('course.html', course=course, items=items)
+        return render_template('course.html', course=course, items=items, user=user)
+
 
 
 # Create Recipe
@@ -289,6 +291,22 @@ def deleteRecipe(course_id, recipe_id):
         return render_template('deleterecipe.html', item=itemToDelete)
 
 
+# Add favorites
+@app.route('/favorites/<int:user_id>/<int:recipe_id>/', methods=['GET', 'POST'])
+def new_favorite(user_id, recipe_id):
+    session = DBSession()
+    recipe = session.query(Recipe).filter_by(id=recipe_id).one()
+    user = session.query(User).filter_by(id=user_id).one()
+    user.favorites.append(Recipe)
+    session.add(user)
+    session.commit()
+
+# Favorites Page
+@app.route('/fav')
+def get_favorites(user_id):
+    session = DBSession()
+    favorites = session.query(User).filter_by(course_id=course.id)
+    return render_template('favorites.html', favorites=favorites)
 
 
 if __name__ == '__main__':

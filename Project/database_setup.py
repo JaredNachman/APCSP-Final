@@ -2,11 +2,18 @@
 import os
 import sys
 
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String, Table, create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import sessionmaker, relationship, backref
 
 Base = declarative_base()
+
+# Association Table
+user_fav = Table('user_fav', Base.metadata,
+                             Column('recipe_id', String(500),
+                                    ForeignKey('recipe.id')),
+                             Column('user_id', String(500),
+                                    ForeignKey('user.id')))
 
 # User Class
 class User(Base):
@@ -16,6 +23,7 @@ class User(Base):
     name = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False)
     picture = Column(String(250))
+    favorites = relationship('Recipe', secondary=user_fav, backref='favs')
 
 
 # Course Class
@@ -45,6 +53,7 @@ class Recipe(Base):
     course = relationship(Course)
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
+
 
 
 # Create Database
