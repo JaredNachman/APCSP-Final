@@ -10,9 +10,8 @@
 <body>
   {% include "navigation.html" %}
   <div class="row justify-content-center">
-    <h1>{{course.name}}</h1>
+    <h1>Favorites</h1>
   </div>
-
 
   <div class="row justify-content-center">
 
@@ -35,43 +34,35 @@
     {% endwith %}
   </div>
 
-
-
-  <div class="row justify-content-center">
-    <a href='{{url_for('newRecipe', course_id = course.id) }}'>Add Recipe</a>
-  </div><br>
-
   <div class="row justify-content-md-center">
     <div class="col-lg-8">
-      {% for i in items %}
+      {% for f in favorites %}
       <div class="card text-center">
         <div class="card-header">
-          <h3>{{i.name}}</h3>
-          <form action="{{url_for('new_favorite', user_id = user.id, recipe_id=i.id)}}" method="post">
-            <input class="btn btn-danger" style="margin-left:20px;" type='submit', value='♡'>
-          </form>
-
-
-        </div>
+          <h3>{{f.name}}</h3>
+        <form action="{{url_for('delete_favorite', user_id = user.id, recipe_id=f.id)}}" method="post">
+          <input class="btn btn-danger" style="margin-left:20px;" type='submit', value='Unfavorite'>
+        </form>
+            </div>
 
         <div class="card-body">
           <div class="row whole-card justify-content-center">
             <div class="col-lg-4">
               <ul class="list-group list-group-flush">
-                <li class="list-group-item"><b>Total Time:</b> {{i.total_time}}</li>
-                <li class="list-group-item"><b>Prep Time:</b> {{i.prep_time}}</li>
-                <li class="list-group-item"><b>Cook Time:</b> {{i.total_time}}</li>
+                <li class="list-group-item"><b>Total Time:</b> {{f.total_time}}</li>
+                <li class="list-group-item"><b>Prep Time:</b> {{f.prep_time}}</li>
+                <li class="list-group-item"><b>Cook Time:</b> {{f.total_time}}</li>
               </ul>
             </div>
 
             <div class="col-lg-4">
-              <img src="/static/images/{{i.image}}" class="center" style="width:250px;height:150px;display:block;margin-left:auto;margin-right: auto;" alt="{{i.name}}">
+              <img src="/static/images/{{f.image}}" class="center" style="width:250px;height:150px;display:block;margin-left:auto;margin-right: auto;" alt="{{f.name}}">
             </div>
 
             <div class="col-lg-4">
               <ul class="list-group list-group-flush">
-                <li class="list-group-item"><b>Difficulty:</b> {{i.difficulty}}</li>
-                <li class="list-group-item"><b>Yield:</b> {{i.output}}</li>
+                <li class="list-group-item"><b>Difficulty:</b> {{f.difficulty}}</li>
+                <li class="list-group-item"><b>Yield:</b> {{f.output}}</li>
               </ul>
             </div>
           </div><br>
@@ -81,27 +72,22 @@
             <div class="col-sm-5">
                 <div class="card-body">
                   <h5 class="card-title"><b>Directions:</b></h5>
-                  <p>{{i.directions}}</p>
+                  <p>{{f.directions}}</p>
                 </div>
             </div>
             <div class="col-sm-5">
                 <div class="card-body">
                   <h5 class="card-title"><b>Ingredients:</b></h5>
-                  <p>{{i.ingredients}}</p>
+                  <p>{{f.ingredients}}</p>
                 </div>
             </div>
           </div>
           </div>
-          <div class="card-footer text-muted">
-            <a href='{{url_for('editRecipe', course_id = course.id, recipe_id = i.id) }}'>Edit</a>
-            |
-            <a href='{{url_for('deleteRecipe', course_id = course.id, recipe_id = i.id ) }}'>Delete</a>
-          </div>
-
         </div>
         <br>
         {% endfor %}
       </div>
+
 
 </body>
 

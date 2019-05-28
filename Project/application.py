@@ -66,6 +66,10 @@ def getUserID(email):
     except:
         return None
 
+def get_user(email):
+    session = DBSession()
+    user = session.query(User).filter_by(email=email).first()
+    return user
 
 # Google Connect
 @app.route('/gconnect', methods=['POST'])
@@ -216,7 +220,7 @@ def courseMenu(course_id):
     session = DBSession()
     course = session.query(Course).filter_by(id=course_id).one()
     items = session.query(Recipe).filter_by(course_id=course.id)
-    user = session.query(User).filter_by(id=user_id).one()
+    user = get_user(login_session['email'])
     if 'username' not in login_session:
         return render_template('publiccourse.html', course=course, items=items)
     else:
@@ -251,7 +255,6 @@ def editRecipe(course_id, recipe_id):
     editedItem = session.query(Recipe).filter_by(id=recipe_id).one()
     if getUserID(login_session['email']) != editedItem.user_id:
         return "<script>function myFunction() {alert('You are not authorized to edit this recipe.');}</script><body onload='myFunction()''>"
-    if request.form:
         if request.form.get('name'):
             editedItem.name = request.form.get('name')
         if request.form.get('total_time'):
@@ -292,21 +295,37 @@ def deleteRecipe(course_id, recipe_id):
 
 
 # Add favorites
-@app.route('/favorites/<int:user_id>/<int:recipe_id>/', methods=['GET', 'POST'])
+@app.route('/favorites/<int:user_id>/<int:recipe_id>/newfavorite', methods=['GET', 'POST'])
 def new_favorite(user_id, recipe_id):
     session = DBSession()
     recipe = session.query(Recipe).filter_by(id=recipe_id).one()
     user = session.query(User).filter_by(id=user_id).one()
-    user.favorites.append(Recipe)
+    user.favorites.append(recipe)
     session.add(user)
     session.commit()
+    return render_template('favorites.html',  user=user, favorites=user.favorites)
+    flash("New Favorite Added!")
 
-# Favorites Page
-@app.route('/fav')
-def get_favorites(user_id):
+# Add favorites
+@app.route('/favorites')
+def find_favorite(user_id):
     session = DBSession()
-    favorites = session.query(User).filter_by(course_id=course.id)
-    return render_template('favorites.html', favorites=favorites)
+    user = session.query(User).filter_by(id=user_id).one()
+    return render_template('favorites.html', user=user, favorites=user.favorites)
+
+
+@app.route('/favorites/<int:user_id>/<int:recipe_id>/delete', methods=['GET', 'POST'])
+def delete_favorite(user_id, recipe_id):
+    session = DBSession()
+    recipe = session.query(Recipe).filter_by(id=recipe_id).one()
+    user = session.query(User).filter_by(id=user_id).one()
+    user.favorites.remove(recipe)
+    session.add(user)
+    session.commit()
+    return render_template('favorites.html',  user=user, favorites=user.favorites)
+    flash("New Favorite Added!")
+
+
 
 
 if __name__ == '__main__':
