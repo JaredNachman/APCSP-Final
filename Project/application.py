@@ -1,4 +1,4 @@
-# Imports
+"""Imports"""
 import os
 import json
 import random
@@ -19,7 +19,7 @@ from werkzeug.utils import secure_filename
 
 
 # Database Binding
-app = Flask(__name__)
+APP = Flask(__name__)
 
 CLIENT_ID = json.loads(
     open('client_secrets.json', 'r').read())['web']['client_id']
@@ -28,20 +28,21 @@ APPLICATION_NAME = "Recipe Application"
 UPLOAD_FOLDER = './static/images'
 ALLOWED_EXTENSIONS = set(['jpg', 'pdf', 'jpeg', 'png'])
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+APP.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+APP.jinja_env.globals['login_session'] = login_session
 
 
 
-engine = create_engine('sqlite:///recipecollection.db')
+ENGINE = create_engine('sqlite:///recipecollection.db')
 
-Base.metadata.bind = engine
+Base.metadata.bind = ENGINE
 
-DBSession = sessionmaker(bind=engine)
-session = DBSession()
+DBSESSION = sessionmaker(bind=ENGINE)
 
 # Anti-forgery state token
-@app.route('/login')
-def showLogin():
+@APP.route('/login')
+def show_login():
+    """Docstring"""
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
@@ -49,31 +50,42 @@ def showLogin():
     return render_template('login.html', STATE=state)
 
 # Random Functions
-def createUser(login_session):
-    newUser = User(name=login_session['username'], email=login_session[
-                   'email'], picture=login_session['picture'])
-    session.add(newUser)
+def create_user():
+    """Docstring"""
+    session = DBSESSION()
+    new_user = User(name=login_session['username'], email=login_session[
+        'email'], picture=login_session['picture'])
+    session.add(new_user)
     session.commit()
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
-def getUserInfo(user_id):
+
+def get_user_info(user_id):
+    """Docstring"""
+    session = DBSESSION()
     user = session.query(User).filter_by(id=user_id).one()
     return user
-def getUserID(email):
-    try:
-        user = session.query(User).filter_by(email=email).one()
+
+def get_user_id(email):
+    """Docstring"""
+    session = DBSESSION()
+    user = session.query(User).filter_by(email=email).first()
+    if user:
         return user.id
-    except:
-        return None
+    return None
+
 
 def get_user(email):
-    session = DBSession()
+    """Docstring"""
+    session = DBSESSION()
     user = session.query(User).filter_by(email=email).first()
     return user
 
+
 # Google Connect
-@app.route('/gconnect', methods=['POST'])
+@APP.route('/gconnect', methods=['POST'])
 def gconnect():
+    """Docstring"""
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -97,8 +109,8 @@ def gconnect():
     access_token = credentials.access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
            % access_token)
-    h = httplib2.Http()
-    result = json.loads(h.request(url, 'GET')[1])
+    header = httplib2.Http()
+    result = json.loads(header.request(url, 'GET')[1])
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)
@@ -147,9 +159,9 @@ def gconnect():
     login_session['provider'] = 'google'
 
     # see if user exists, if it doesn't make a new one
-    user_id = getUserID(data["email"])
+    user_id = get_user_id(data["email"])
     if not user_id:
-        user_id = createUser(login_session)
+        user_id = create_user()
     login_session['user_id'] = user_id
 
     output = ''
@@ -158,7 +170,8 @@ def gconnect():
     output += '!</h1>'
     output += '<img src="'
     output += login_session['picture']
-    output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
+    output += ' " style = "width: 300px; height: 300px;border-radius:\
+     150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
     flash("You are now logged in as %s" % login_session['username'])
     print "done!"
     return output
@@ -168,8 +181,9 @@ def gconnect():
 
 
 
-@app.route('/gdisconnect')
+@APP.route('/gdisconnect')
 def gdisconnect():
+    """Docstring"""
     # Only disconnect a connected user.
     access_token = login_session.get('access_token')
     if access_token is None:
@@ -178,20 +192,21 @@ def gdisconnect():
         response.headers['Content-Type'] = 'application/json'
         return response
     url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % access_token
-    h = httplib2.Http()
-    result = h.request(url, 'GET')[0]
+    header = httplib2.Http()
+    result = header.request(url, 'GET')[0]
     if result['status'] == '200':
         response = make_response(json.dumps('Successfully disconnected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
-    else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
-        response.headers['Content-Type'] = 'application/json'
-        return response
+
+    response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 # Logout
-@app.route('/logout')
+@APP.route('/logout')
 def disconnect():
+    """Docstring"""
     gdisconnect()
     del login_session['gplus_id']
     del login_session['access_token']
@@ -199,62 +214,77 @@ def disconnect():
     del login_session['email']
     del login_session['picture']
     flash("You have been successfully logged out.")
-    return redirect(url_for('appHome'))
+    return redirect(url_for('app_home'))
 
 
 
 # App Home
-@app.route('/')
-def appHome():
-    session = DBSession()
+@APP.route('/')
+def app_home():
+    """Docstring"""
+    session = DBSESSION()
     courses = session.query(Course).all()
+    print login_session
     if 'username' not in login_session:
         return render_template('publichome.html', courses=courses)
-    else:
-        return render_template('home.html', courses=courses)
+
+    return render_template('home.html', courses=courses)
 
 
 # Course Home
-@app.route('/course/<int:course_id>/')
-def courseMenu(course_id):
-    session = DBSession()
+@APP.route('/course/<int:course_id>/')
+def course_menu(course_id):
+    """Docstring"""
+    session = DBSESSION()
     course = session.query(Course).filter_by(id=course_id).one()
     items = session.query(Recipe).filter_by(course_id=course.id)
-    user = get_user(login_session['email'])
+    print login_session
     if 'username' not in login_session:
         return render_template('publiccourse.html', course=course, items=items)
-    else:
-        return render_template('course.html', course=course, items=items, user=user)
+
+    user = get_user(login_session['email'])
+    return render_template('course.html', course=course, items=items, user=user)
 
 
 
 # Create Recipe
-@app.route('/courses/<int:course_id>/new', methods=['GET', 'POST'])
+@APP.route('/courses/<int:course_id>/new', methods=['GET', 'POST'])
 def newRecipe(course_id):
-    session = DBSession()
-    if request.method =='POST':
-        file = request.files['image']
-        if file:
+    """Docstring"""
+    session = DBSESSION()
+    if request.method == 'POST':
+        input_file = request.files['image']
+        if input_file:
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            input_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             print filename
-        newItem = Recipe(name=request.form.get('name'), total_time=request.form.get('total_time'), prep_time=request.form.get('prep_time'), cook_time=request.form.get('cook_time'), difficulty=request.form.get('difficulty'), directions=request.form.get('directions'), ingredients=request.form.get('ingredients'), output=request.form.get('output'), image=filename, user_id=login_session['user_id'], course_id=course_id)
+        newItem = Recipe(name=request.form.get('name'), \
+        total_time=request.form.get('total_time'), \
+        prep_time=request.form.get('prep_time'), \
+        cook_time=request.form.get('cook_time'), \
+        difficulty=request.form.get('difficulty'),\
+         directions=request.form.get('directions'), \
+         ingredients=request.form.get('ingredients'), \
+         output=request.form.get('output'), image=filename, \
+         user_id=login_session['user_id'], course_id=course_id)
         session.add(newItem)
         flash('%s Successfully Created!' % newItem.name)
         session.commit()
-        return redirect(url_for('courseMenu', course_id=course_id))
+        return redirect(url_for('course_menu', course_id=course_id))
     else:
         return render_template('newrecipe.html', course_id=course_id)
 
 
 # Edit Recipe
-session = DBSession()
-@app.route('/courses/<int:course_id>/<int:recipe_id>/edit', methods=['GET', 'POST'])
+@APP.route('/courses/<int:course_id>/<int:recipe_id>/edit', methods=['GET', 'POST'])
 def editRecipe(course_id, recipe_id):
-    session = DBSession()
+    """Docstring"""
+    session = DBSESSION()
     editedItem = session.query(Recipe).filter_by(id=recipe_id).one()
-    if getUserID(login_session['email']) != editedItem.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to edit this recipe.');}</script><body onload='myFunction()''>"
+    if get_user_id(login_session['email']) != editedItem.user_id:
+        return "<script>function myFunction() \
+        {alert('You are not authorized to edit this recipe.')\
+        ;}</script><body onload='myFunction()''>"
         if request.form.get('name'):
             editedItem.name = request.form.get('name')
         if request.form.get('total_time'):
@@ -273,62 +303,69 @@ def editRecipe(course_id, recipe_id):
             editedItem.output = request.form.get('output')
         session.add(editedItem)
         session.commit()
-        return redirect(url_for('courseMenu', course_id=course_id))
+        return redirect(url_for('course_menu', course_id=course_id))
     else:
-        return render_template('editrecipe.html', course_id=course_id, recipe_id=recipe_id, item=editedItem)
+        return render_template('editrecipe.html', course_id=course_id, \
+        recipe_id=recipe_id, item=editedItem)
 
 
 # Delete Recipe
-@app.route('/courses/<int:course_id>/<int:recipe_id>/delete', methods=['GET', 'POST'])
+@APP.route('/courses/<int:course_id>/<int:recipe_id>/delete', methods=['GET', 'POST'])
 def deleteRecipe(course_id, recipe_id):
-    session = DBSession()
+    """Docstring"""
+    session = DBSESSION()
     itemToDelete = session.query(Recipe).filter_by(id=recipe_id).one()
-    if getUserID(login_session['email']) != itemToDelete.user_id:
-        return "<script>function myFunction() {alert('You are not authorized to delete this recipe.');}</script><body onload='myFunction()''>"
+    if get_user_id(login_session['email']) != itemToDelete.user_id:
+        return "<script>function myFunction()\
+         {alert('You are not authorized to delete this recipe.')\
+         ;}</script><body onload='myFunction()''>"
     if request.method == 'POST':
         session.delete(itemToDelete)
         flash('%s Deleted' % itemToDelete.name)
         session.commit()
-        return redirect(url_for('courseMenu', course_id=course_id))
+        return redirect(url_for('course_menu', course_id=course_id))
     else:
         return render_template('deleterecipe.html', item=itemToDelete)
 
 
 # Add favorites
-@app.route('/favorites/<int:user_id>/<int:recipe_id>/newfavorite', methods=['GET', 'POST'])
+@APP.route('/favorites/<int:user_id>/<int:recipe_id>/newfavorite', methods=['GET', 'POST'])
 def new_favorite(user_id, recipe_id):
-    session = DBSession()
+    """Docstring"""
+    session = DBSESSION()
     recipe = session.query(Recipe).filter_by(id=recipe_id).one()
     user = session.query(User).filter_by(id=user_id).one()
     user.favorites.append(recipe)
     session.add(user)
     session.commit()
-    return render_template('favorites.html',  user=user, favorites=user.favorites)
+    return render_template('favorites.html', user=user, favorites=user.favorites)
     flash("New Favorite Added!")
 
 # Add favorites
-@app.route('/favorites')
+@APP.route('/favorites')
 def find_favorite(user_id):
-    session = DBSession()
+    """Docstring"""
+    session = DBSESSION()
     user = session.query(User).filter_by(id=user_id).one()
     return render_template('favorites.html', user=user, favorites=user.favorites)
 
 
-@app.route('/favorites/<int:user_id>/<int:recipe_id>/delete', methods=['GET', 'POST'])
+@APP.route('/favorites/<int:user_id>/<int:recipe_id>/delete', methods=['GET', 'POST'])
 def delete_favorite(user_id, recipe_id):
-    session = DBSession()
+    """Docstring"""
+    session = DBSESSION()
     recipe = session.query(Recipe).filter_by(id=recipe_id).one()
     user = session.query(User).filter_by(id=user_id).one()
     user.favorites.remove(recipe)
     session.add(user)
     session.commit()
-    return render_template('favorites.html',  user=user, favorites=user.favorites)
+    return render_template('favorites.html', user=user, favorites=user.favorites)
     flash("New Favorite Added!")
 
 
 
 
 if __name__ == '__main__':
-    app.secret_key = 'super_secret-key'
-    app.debug = True
-    app.run(host='0.0.0.0', port=5000)
+    APP.secret_key = 'super_secret-key'
+    APP.debug = True
+    APP.run(host='0.0.0.0', port=5000)

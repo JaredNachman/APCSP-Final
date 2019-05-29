@@ -44,29 +44,29 @@
 <body>
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-info" class="row">
-    <a class="navbar-brand" href="{{url_for('appHome')}}">Family Cookbook</a>
+    <a class="navbar-brand" href="{{url_for('app_home')}}">Family Cookbook</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" "" id="navbarText">
       <ul class="navbar-nav mr-auto">
         <li class="nav-item">
-          <a class="nav-link" href="{{url_for('courseMenu', course_id=1)}}">Appetizer</a>
+          <a class="nav-link" href="{{url_for('course_menu', course_id=1)}}">Appetizer</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{url_for('courseMenu', course_id=2)}}">Main Course</a>
+          <a class="nav-link" href="{{url_for('course_menu', course_id=2)}}">Main Course</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{url_for('courseMenu', course_id=3)}}">Dessert</a>
+          <a class="nav-link" href="{{url_for('course_menu', course_id=3)}}">Dessert</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="{{url_for('find_favorite')}}">Favorites</a>
         </li>
 
         <!--login-->
-        {% if 'username' not in session %}
+        {% if 'username' not in login_session %}
         <li>
-          <a href="{{url_for('showLogin')}}" class="fa fa-google navbar-right"> Login</a>
+          <a href="{{url_for('show_login')}}" class="fa fa-google navbar-right"> Login</a>
         </li>
         <!--logout/profile-->
         {% else %}
