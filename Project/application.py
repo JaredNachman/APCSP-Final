@@ -238,12 +238,11 @@ def course_menu(course_id):
     session = DBSESSION()
     course = session.query(Course).filter_by(id=course_id).one()
     items = session.query(Recipe).filter_by(course_id=course.id)
-    print login_session
     if 'username' not in login_session:
         return render_template('publiccourse.html', course=course, items=items)
-
-    user = get_user(login_session['email'])
-    return render_template('course.html', course=course, items=items, user=user)
+    else:
+        user = get_user(login_session['email'])
+        return render_template('course.html', course=course, items=items, user=user)
 
 
 
@@ -341,12 +340,11 @@ def new_favorite(user_id, recipe_id):
     return render_template('favorites.html', user=user, favorites=user.favorites)
     flash("New Favorite Added!")
 
-# Add favorites
+# Favorites
 @APP.route('/favorites')
-def find_favorite(user_id):
-    """Docstring"""
-    session = DBSESSION()
-    user = session.query(User).filter_by(id=user_id).one()
+def find_favorite():
+    session = DBSession()
+    user = get_user(login_session['email'])
     return render_template('favorites.html', user=user, favorites=user.favorites)
 
 
