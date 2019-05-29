@@ -343,7 +343,7 @@ def new_favorite(user_id, recipe_id):
 # Favorites
 @APP.route('/favorites')
 def find_favorite():
-    session = DBSession()
+    session = DBSESSION()
     user = get_user(login_session['email'])
     return render_template('favorites.html', user=user, favorites=user.favorites)
 
