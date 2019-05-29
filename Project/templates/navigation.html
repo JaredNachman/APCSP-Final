@@ -59,9 +59,7 @@
         <li class="nav-item">
           <a class="nav-link" href="{{url_for('courseMenu', course_id=3)}}">Dessert</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{url_for('find_favorite')}}">Favorites</a>
-        </li>
+
 
         <!--login-->
         {% if 'username' not in session %}
@@ -70,7 +68,9 @@
         </li>
         <!--logout/profile-->
         {% else %}
-
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('find_favorite')}}">Favorites</a>
+        </li>
         <li>
           <a href="/logout" class="btn btn-info btn-sm nav-link">
             <span class="glyphicon glyphicon-log-out"></span> Log out
