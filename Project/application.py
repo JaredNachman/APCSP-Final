@@ -256,7 +256,7 @@ def new_recipe(course_id):
     if request.method == 'POST':
         input_file = request.files['image']
         if input_file:
-            filename = secure_filename(file.filename)
+            filename = secure_filename(input_file.filename)
             input_file.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
             print filename
         new_item = Recipe(name=request.form.get('name'), \
@@ -273,7 +273,7 @@ def new_recipe(course_id):
         session.commit()
         return redirect(url_for('course_menu', course_id=course_id))
     else:
-        return render_template('new_recipe.html', course_id=course_id)
+        return render_template('newrecipe.html', course_id=course_id)
 
 
 # Edit Recipe
@@ -306,7 +306,7 @@ def edit_recipe(course_id, recipe_id):
         session.commit()
         return redirect(url_for('course_menu', course_id=course_id))
 
-    return render_template('edit_recipe .html', course_id=course_id, \
+    return render_template('editrecipe.html', course_id=course_id, \
     recipe_id=recipe_id, item=edited_item)
 
 
@@ -326,7 +326,7 @@ def delete_recipe(course_id, recipe_id):
         session.commit()
         return redirect(url_for('course_menu', course_id=course_id))
 
-    return render_template('delete_recipe.html', item=item_to_delete)
+    return render_template('deleterecipe.html', item=item_to_delete)
 
 
 # Add favorites
