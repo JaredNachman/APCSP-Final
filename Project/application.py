@@ -4,18 +4,20 @@ import json
 import random
 import string
 import httplib2
-from flask import (Flask, flash, jsonify, make_response, redirect,
+from flask import (Flask, flash, make_response, redirect,
                    render_template, request)
 from oauth2client.client import FlowExchangeError, flow_from_clientsecrets
 from flask import session as login_session
 from flask import url_for
 import requests
-from database_setup import Base, Course, Recipe, User
-from sqlalchemy import create_engine, asc
+from sqlalchemy import create_engine
+from werkzeug.utils import secure_filename
 from sqlalchemy.orm import sessionmaker
+from database_setup import Base, Course, Recipe, User
+
 
 # File Upload
-from werkzeug.utils import secure_filename
+
 
 
 # Database Binding
@@ -240,24 +242,24 @@ def course_menu(course_id):
     items = session.query(Recipe).filter_by(course_id=course.id)
     if 'username' not in login_session:
         return render_template('publiccourse.html', course=course, items=items)
-    else:
-        user = get_user(login_session['email'])
-        return render_template('course.html', course=course, items=items, user=user)
+
+    user = get_user(login_session['email'])
+    return render_template('course.html', course=course, items=items, user=user)
 
 
 
 # Create Recipe
 @APP.route('/courses/<int:course_id>/new', methods=['GET', 'POST'])
-def newRecipe(course_id):
+def new_recipe(course_id):
     """Docstring"""
     session = DBSESSION()
     if request.method == 'POST':
         input_file = request.files['image']
         if input_file:
             filename = secure_filename(file.filename)
-            input_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            input_file.save(os.path.join(APP.config['UPLOAD_FOLDER'], filename))
             print filename
-        newItem = Recipe(name=request.form.get('name'), \
+        new_item = Recipe(name=request.form.get('name'), \
         total_time=request.form.get('total_time'), \
         prep_time=request.form.get('prep_time'), \
         cook_time=request.form.get('cook_time'), \
@@ -266,65 +268,65 @@ def newRecipe(course_id):
          ingredients=request.form.get('ingredients'), \
          output=request.form.get('output'), image=filename, \
          user_id=login_session['user_id'], course_id=course_id)
-        session.add(newItem)
-        flash('%s Successfully Created!' % newItem.name)
+        session.add(new_item)
+        flash('%s Successfully Created!' % new_item.name)
         session.commit()
         return redirect(url_for('course_menu', course_id=course_id))
     else:
-        return render_template('newrecipe.html', course_id=course_id)
+        return render_template('new_recipe.html', course_id=course_id)
 
 
 # Edit Recipe
 @APP.route('/courses/<int:course_id>/<int:recipe_id>/edit', methods=['GET', 'POST'])
-def editRecipe(course_id, recipe_id):
+def edit_recipe(course_id, recipe_id):
     """Docstring"""
     session = DBSESSION()
-    editedItem = session.query(Recipe).filter_by(id=recipe_id).one()
-    if get_user_id(login_session['email']) != editedItem.user_id:
+    edited_item = session.query(Recipe).filter_by(id=recipe_id).one()
+    if get_user_id(login_session['email']) != edited_item.user_id:
         return "<script>function myFunction() \
         {alert('You are not authorized to edit this recipe.')\
         ;}</script><body onload='myFunction()''>"
         if request.form.get('name'):
-            editedItem.name = request.form.get('name')
+            edited_item.name = request.form.get('name')
         if request.form.get('total_time'):
-            editedItem.total_time = request.form.get('total_time')
+            edited_item.total_time = request.form.get('total_time')
         if request.form.get('prep_time'):
-            editedItem.prep_time = request.form.get('prep_time')
+            edited_item.prep_time = request.form.get('prep_time')
         if request.form.get('cook_time'):
-            editedItem.cook_time = request.form.get('cook_time')
+            edited_item.cook_time = request.form.get('cook_time')
         if request.form.get('difficulty'):
-            editedItem.difficulty = request.form.get('difficulty')
+            edited_item.difficulty = request.form.get('difficulty')
         if request.form.get('directions'):
-            editedItem.directions = request.form.get('directions')
+            edited_item.directions = request.form.get('directions')
         if request.form.get('ingredients'):
-            editedItem.ingredients = request.form.get('ingredients')
+            edited_item.ingredients = request.form.get('ingredients')
         if request.form.get('output'):
-            editedItem.output = request.form.get('output')
-        session.add(editedItem)
+            edited_item.output = request.form.get('output')
+        session.add(edited_item)
         session.commit()
         return redirect(url_for('course_menu', course_id=course_id))
-    else:
-        return render_template('editrecipe.html', course_id=course_id, \
-        recipe_id=recipe_id, item=editedItem)
+
+    return render_template('edit_recipe .html', course_id=course_id, \
+    recipe_id=recipe_id, item=edited_item)
 
 
 # Delete Recipe
 @APP.route('/courses/<int:course_id>/<int:recipe_id>/delete', methods=['GET', 'POST'])
-def deleteRecipe(course_id, recipe_id):
+def delete_recipe(course_id, recipe_id):
     """Docstring"""
     session = DBSESSION()
-    itemToDelete = session.query(Recipe).filter_by(id=recipe_id).one()
-    if get_user_id(login_session['email']) != itemToDelete.user_id:
+    item_to_delete = session.query(Recipe).filter_by(id=recipe_id).one()
+    if get_user_id(login_session['email']) != item_to_delete.user_id:
         return "<script>function myFunction()\
          {alert('You are not authorized to delete this recipe.')\
          ;}</script><body onload='myFunction()''>"
     if request.method == 'POST':
-        session.delete(itemToDelete)
-        flash('%s Deleted' % itemToDelete.name)
+        session.delete(item_to_delete)
+        flash('%s Deleted' % item_to_delete.name)
         session.commit()
         return redirect(url_for('course_menu', course_id=course_id))
-    else:
-        return render_template('deleterecipe.html', item=itemToDelete)
+
+    return render_template('delete_recipe.html', item=item_to_delete)
 
 
 # Add favorites
@@ -343,7 +345,7 @@ def new_favorite(user_id, recipe_id):
 # Favorites
 @APP.route('/favorites')
 def find_favorite():
-    session = DBSESSION()
+    """Docstring"""
     user = get_user(login_session['email'])
     return render_template('favorites.html', user=user, favorites=user.favorites)
 
