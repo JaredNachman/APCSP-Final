@@ -3,13 +3,11 @@ import os
 import json
 import random
 import string
+import requests
 import httplib2
 from flask import (Flask, flash, make_response, redirect,
-                   render_template, request)
+                   render_template, request, url_for, session as login_session)
 from oauth2client.client import FlowExchangeError, flow_from_clientsecrets
-from flask import session as login_session
-from flask import url_for
-import requests
 from sqlalchemy import create_engine
 from werkzeug.utils import secure_filename
 from sqlalchemy.orm import sessionmaker
