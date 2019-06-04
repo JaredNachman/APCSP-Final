@@ -61,13 +61,21 @@ def create_user():
     return user.id
 
 def get_user_info(user_id):
-    """Pull user from user id and get user info"""
+    """Pull user from user id and get user info
+
+    Keyword arguments:
+    user_id -- the id of the user from the database
+    """
     session = DBSESSION()
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 def get_user_id(email):
-    """Pull user from email and get user id"""
+    """Pull user from email and get user id
+
+    Keyword arguments:
+    email -- a valid email address
+    """
     session = DBSESSION()
     user = session.query(User).filter_by(email=email).first()
     if user:
@@ -76,7 +84,11 @@ def get_user_id(email):
 
 
 def get_user(email):
-    """Pull user from email and return user"""
+    """Pull user from email and return user
+
+    Keyword arguments:
+    email -- a valid email address
+    """
     session = DBSESSION()
     user = session.query(User).filter_by(email=email).first()
     return user
@@ -234,7 +246,11 @@ def app_home():
 # Course Home
 @APP.route('/course/<int:course_id>/')
 def course_menu(course_id):
-    """Render html file and populate it with recipes for each course"""
+    """Render html file and populate it with recipes for each course
+
+    Keyword arguments:
+    course_id -- the id of the course from the databse that the course menu will fall under
+    """
     session = DBSESSION()
     course = session.query(Course).filter_by(id=course_id).one()
     items = session.query(Recipe).filter_by(course_id=course.id)
@@ -249,7 +265,11 @@ def course_menu(course_id):
 # Create Recipe
 @APP.route('/courses/<int:course_id>/new', methods=['GET', 'POST'])
 def new_recipe(course_id):
-    """Pull input from form to create a new item in the database"""
+    """Pull input from form to create a new item in the database_setup
+
+    Keyword arguments:
+    course_id -- id of the course from the database that the ne recipe will go to
+    """
     session = DBSESSION()
     if request.method == 'POST':
         input_file = request.files['image']
@@ -277,13 +297,21 @@ def new_recipe(course_id):
 # Edit Recipe
 @APP.route('/courses/<int:course_id>/<int:recipe_id>/edit', methods=['GET', 'POST'])
 def edit_recipe(course_id, recipe_id):
-    """Docstring"""
+    """Edit information from a pre-existing recipe
+
+    Keyword arguments:
+
+    course_id -- the id of the couse from the database that the edited recipe is in
+    recipe_id -- the id of the recipe from the database that the user is editng
+    """
     session = DBSESSION()
     edited_item = session.query(Recipe).filter_by(id=recipe_id).one()
+
     if get_user_id(login_session['email']) != edited_item.user_id:
-        return "<script>function myFunction() \
-        {alert('You are not authorized to edit this recipe.')\
-        ;}</script><body onload='myFunction()''>"
+        flash("You are not authorized to edit this recipe.")
+        return redirect(url_for('course_menu', course_id=course_id))
+
+    if request.method == 'POST':
         if request.form.get('name'):
             edited_item.name = request.form.get('name')
         if request.form.get('total_time'):
@@ -311,7 +339,12 @@ def edit_recipe(course_id, recipe_id):
 # Delete Recipe
 @APP.route('/courses/<int:course_id>/<int:recipe_id>/delete', methods=['GET', 'POST'])
 def delete_recipe(course_id, recipe_id):
-    """Delete item from database"""
+    """Delete item from database
+
+    Keyword arguments:
+    course_id -- the id of the course from the database that the recipe is being deleted from
+    recipe_id -- the id of the recipe from the database for the recipe that is being deleted
+     """
     session = DBSESSION()
     item_to_delete = session.query(Recipe).filter_by(id=recipe_id).one()
 
@@ -330,7 +363,13 @@ def delete_recipe(course_id, recipe_id):
 # Add favorites
 @APP.route('/favorites/<int:user_id>/<int:recipe_id>/newfavorite', methods=['GET', 'POST'])
 def new_favorite(user_id, recipe_id):
-    """Save the recipe that is favorited to the database"""
+    """Save the recipe that is favorited to the database
+
+    Keyword arguments:
+
+    user_id -- the id of the valid user from the database who is adding the favorite
+    recipe_id -- the id of the recipe that is being added to the favorite list
+    """
     session = DBSESSION()
     recipe = session.query(Recipe).filter_by(id=recipe_id).one()
     user = session.query(User).filter_by(id=user_id).one()
@@ -350,7 +389,13 @@ def find_favorite():
 
 @APP.route('/favorites/<int:user_id>/<int:recipe_id>/delete', methods=['GET', 'POST'])
 def delete_favorite(user_id, recipe_id):
-    """Delete a selected favorite from the database"""
+    """Delete a selected favorite from the database
+
+    Keyword arguments:
+
+    user_id -- the id of the user from the database who is deleting a recipe from the favorite list
+    recipe_id -- the id of the recipe that is being removed from the favorite list
+    """
     session = DBSESSION()
     recipe = session.query(Recipe).filter_by(id=recipe_id).one()
     user = session.query(User).filter_by(id=user_id).one()
