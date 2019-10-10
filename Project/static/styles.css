@@ -1,0 +1,114 @@
+body {
+font-family: 'Varela Round', sans-serif;
+}
+.modal-login {
+color: #636363;
+width: 350px;
+}
+.modal-login .modal-content {
+padding: 20px;
+border-radius: 5px;
+border: none;
+}
+.modal-login .modal-header {
+border-bottom: none;
+    position: relative;
+    justify-content: center;
+}
+.modal-login h4 {
+text-align: center;
+font-size: 26px;
+margin: 30px 0 -15px;
+}
+.modal-login .form-control:focus {
+border-color: #70c5c0;
+}
+.modal-login .form-control, .modal-login .btn {
+min-height: 40px;
+border-radius: 3px;
+}
+.modal-login .close {
+    position: absolute;
+top: -5px;
+right: -5px;
+}
+.modal-login .modal-footer {
+background: #ecf0f1;
+border-color: #dee4e7;
+text-align: center;
+    justify-content: center;
+margin: 0 -20px -20px;
+border-radius: 5px;
+font-size: 13px;
+}
+.modal-login .modal-footer a {
+color: #999;
+}
+
+.modal-login .avatar img {
+width: 100%;
+}
+.modal-login.modal-dialog {
+margin-top: 80px;
+}
+.modal-login .btn {
+    color: #fff;
+    border-radius: 4px;
+background: #60c7c1;
+text-decoration: none;
+transition: all 0.4s;
+    line-height: normal;
+    border: none;
+}
+.modal-login .btn:hover, .modal-login .btn:focus {
+background: #45aba6;
+outline: none;
+}
+.trigger-btn {
+display: inline-block;
+}
+
+
+body{
+    margin: 0;
+    font-size: .9rem;
+    font-weight: 400;
+    line-height: 1.6;
+    color: #212529;
+    text-align: left;
+    background-color: #f5f8fa;
+}
+
+.navbar-laravel
+{
+    box-shadow: 0 2px 4px rgba(0,0,0,.04);
+}
+
+.navbar-brand , .nav-link, .my-form, .login-form
+{
+    font-family: Raleway, sans-serif;
+}
+
+.my-form
+{
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.my-form .row
+{
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.login-form
+{
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+}
+
+.login-form .row
+{
+    margin-left: 0;
+    margin-right: 0;
+}

@@ -1,0 +1,102 @@
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+  <script>
+    function start() {
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '1063972005002-jl8scutiph0enhulvji3uvc2ai1faj8b.apps.googleusercontent.com'
+        });
+      });
+    }
+  </script>
+</head>
+
+
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-info" class="row">
+    <a class="navbar-brand" href="{{url_for('app_home')}}">Family Cookbook</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" "" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('course_menu', course_id=1)}}">Appetizer</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('course_menu', course_id=2)}}">Main Course</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('course_menu', course_id=3)}}">Dessert</a>
+  </div>
+
+</nav><br>
+
+
+
+
+<div class="row justify-content-center">
+  <div class="card text-center col-lg-6">
+  <div class="card-header">
+      <h5 class="card-title">Login with Google</h5>
+  </div>
+  <div class="card-body">
+    <button id="signinButton">Google Sign In</button>
+    <div id="result"></div>
+  </div>
+  <div class="card-footer text-muted">
+  </div>
+</div>
+</div><br>
+
+  {% include "footer.html" %}
+
+
+
+  <script>
+    $('#signinButton').click(function() {
+      function signInCallback(authResult) {
+        if (authResult['code']) {
+          $('#signinButton').attr('style', 'display: none');
+          $.ajax({
+            type: 'POST',
+            url: '/gconnect?state={{STATE}}',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            contentType: 'application/octet-stream; charset=utf-8',
+            success: function(result) {
+              $('#result').html('Login Successful!</br>' + result + '</br>Redirecting...');
+              setTimeout(function() {
+                window.location.href = "/";
+              }, 2000);
+            },
+            processData: false,
+            data: authResult['code']
+          });
+        } else {
+          // handle error
+          console.log('There was an error: ' + authResult['error']);
+          $('#result').html('Failed to make a server-side call. Check your configuration and console.');
+        }
+      }
+      auth2.grantOfflineAccess().then(signInCallback);
+    });
+  </script>
+
+
+
+
+
+
+
+
+
+</html>

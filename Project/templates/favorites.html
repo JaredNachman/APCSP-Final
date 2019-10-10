@@ -1,0 +1,94 @@
+<html>
+
+<head>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+  {% include "navigation.html" %}
+  <div class="row justify-content-center">
+    <h1>Favorites</h1>
+  </div>
+
+  <div class="row justify-content-center">
+
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+
+
+    {% for message in messages %}
+    <div class="col-lg-8">
+      <div class="alert alert-info alert-dismissible">
+        <strong>{{message}}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
+    {% endfor %}
+
+    {% endif %}
+    {% endwith %}
+  </div>
+
+  <div class="row justify-content-md-center">
+    <div class="col-lg-8">
+      {% for f in favorites %}
+      <div class="card text-center">
+        <div class="card-header">
+          <h3>{{f.name}}</h3>
+        <form action="{{url_for('delete_favorite', user_id = user.id, recipe_id=f.id)}}" method="post">
+          <input class="btn btn-danger" style="margin-left:20px;" type='submit', value='Unfavorite'>
+        </form>
+            </div>
+
+        <div class="card-body">
+          <div class="row whole-card justify-content-center">
+            <div class="col-lg-4">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><b>Total Time:</b> {{f.total_time}}</li>
+                <li class="list-group-item"><b>Prep Time:</b> {{f.prep_time}}</li>
+                <li class="list-group-item"><b>Cook Time:</b> {{f.total_time}}</li>
+              </ul>
+            </div>
+
+            <div class="col-lg-4">
+              <img src="/static/images/{{f.image}}" class="center" style="width:250px;height:150px;display:block;margin-left:auto;margin-right: auto;" alt="{{f.name}}">
+            </div>
+
+            <div class="col-lg-4">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item"><b>Difficulty:</b> {{f.difficulty}}</li>
+                <li class="list-group-item"><b>Yield:</b> {{f.output}}</li>
+              </ul>
+            </div>
+          </div><br>
+          <div class="row">
+            <div class="col-sm-1">
+            </div>
+            <div class="col-sm-5">
+                <div class="card-body">
+                  <h5 class="card-title"><b>Directions:</b></h5>
+                  <p>{{f.directions}}</p>
+                </div>
+            </div>
+            <div class="col-sm-5">
+                <div class="card-body">
+                  <h5 class="card-title"><b>Ingredients:</b></h5>
+                  <p>{{f.ingredients}}</p>
+                </div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <br>
+        {% endfor %}
+      </div>
+
+
+</body>
+
+</html>
